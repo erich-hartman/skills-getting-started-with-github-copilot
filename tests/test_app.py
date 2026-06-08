@@ -99,3 +99,18 @@ def test_unregister_rejects_non_participant(client):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Student is not signed up for this activity"
+
+
+def test_signup_rejects_when_activity_is_full(client):
+    activity = app_module.activities["Chess Club"]
+    activity["participants"] = [
+        f"student{i}@mergington.edu" for i in range(activity["max_participants"])
+    ]
+
+    response = client.post(
+        "/activities/Chess Club/signup",
+        params={"email": "extra-student@mergington.edu"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Activity is full"
