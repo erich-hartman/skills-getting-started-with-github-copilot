@@ -22,18 +22,22 @@ document.addEventListener("DOMContentLoaded", () => {
         activityCard.className = "activity-card";
 
         const spotsLeft = details.max_participants - details.participants.length;
+        const escapeHtml = (value) =>
+          String(value).replace(/[&<>"']/g, (char) =>
+            ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]
+          );
         const participantsMarkup = details.participants.length
           ? `<ul class="participants-list">${details.participants
               .map(
                 (participant) => `
                   <li class="participant-item">
-                    <span class="participant-email">${participant}</span>
+                    <span class="participant-email">${escapeHtml(participant)}</span>
                     <button
                       type="button"
                       class="remove-participant-btn"
                       data-activity="${encodeURIComponent(name)}"
                       data-email="${encodeURIComponent(participant)}"
-                      aria-label="Remove ${participant} from ${name}"
+                      aria-label="Remove ${escapeHtml(participant)} from ${escapeHtml(name)}"
                       title="Remove participant"
                     >&times;</button>
                   </li>
